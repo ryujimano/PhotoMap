@@ -9,7 +9,7 @@
 import UIKit
 
 protocol LocationsViewControllerDelegate : class {
-    func locationsPickedLocation(controller: LocationsViewController, latitude: NSNumber, longitude: NSNumber)
+    func locationsPickedLocation(controller: LocationsViewController, latitude: NSNumber, longitude: NSNumber, name: String)
 }
 
 class LocationsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
@@ -59,8 +59,10 @@ class LocationsViewController: UIViewController, UITableViewDelegate, UITableVie
 
         let latString = "\(lat)"
         let lngString = "\(lng)"
+        
+        let name = venue.value(forKey: "name") as? String
 
-        delegate.locationsPickedLocation(controller: self, latitude: lat, longitude: lng)
+        delegate.locationsPickedLocation(controller: self, latitude: lat, longitude: lng, name: name!)
         navigationController?.popViewController(animated: true)
     }
     

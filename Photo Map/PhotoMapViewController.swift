@@ -61,11 +61,11 @@ class PhotoMapViewController: UIViewController, UIImagePickerControllerDelegate,
         })
     }
 
-    func addPin(lat: CLLocationDegrees, long: CLLocationDegrees) {
+    func addPin(lat: CLLocationDegrees, long: CLLocationDegrees, name: String) {
         let point = MKPointAnnotation()
         let locationCoordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
         point.coordinate = locationCoordinate
-        point.title = String(describing: lat)
+        point.title = name
         mapView.addAnnotation(point)
     }
     
@@ -86,8 +86,8 @@ class PhotoMapViewController: UIViewController, UIImagePickerControllerDelegate,
         return annotationView
     }
     
-    func locationsPickedLocation(controller: LocationsViewController, latitude: NSNumber, longitude: NSNumber) {
-        addPin(lat: CLLocationDegrees(latitude), long: CLLocationDegrees(longitude))
+    func locationsPickedLocation(controller: LocationsViewController, latitude: NSNumber, longitude: NSNumber, name: String) {
+        addPin(lat: CLLocationDegrees(latitude), long: CLLocationDegrees(longitude), name: name)
     }
     
     // MARK: - Navigation
