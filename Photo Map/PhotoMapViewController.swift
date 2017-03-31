@@ -15,6 +15,8 @@ class PhotoMapViewController: UIViewController, UIImagePickerControllerDelegate,
     
     var pickedImage: UIImage!
     
+    var photo: UIImage!
+    
     override func viewDidAppear(_ animated: Bool) {
     }
 
@@ -62,10 +64,11 @@ class PhotoMapViewController: UIViewController, UIImagePickerControllerDelegate,
     }
 
     func addPin(lat: CLLocationDegrees, long: CLLocationDegrees, name: String) {
-        let point = MKPointAnnotation()
+        let point = PhotoAnnotation()
         let locationCoordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
         point.coordinate = locationCoordinate
         point.title = name
+        point.photo = pickedImage
         mapView.addAnnotation(point)
     }
     
@@ -74,16 +77,34 @@ class PhotoMapViewController: UIViewController, UIImagePickerControllerDelegate,
         
         var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseID)
         if (annotationView == nil) {
-            annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
             annotationView!.canShowCallout = true
-            annotationView!.leftCalloutAccessoryView = UIImageView(frame: CGRect(x:0, y:0, width: 50, height:50))
+            var resizeRenderImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 45, height: 45))
+            resizeRenderImageView.layer.borderColor = UIColor.white.cgColor
+            resizeRenderImageView.layer.borderWidth = 3.0
+            resizeRenderImageView.contentMode = UIViewContentMode.scaleAspectFill
+            resizeRenderImageView.image = (annotation as? PhotoAnnotation)?.photo
+            
+            UIGraphicsBeginImageContext(resizeRenderImageView.frame.size)
+            resizeRenderImageView.layer.render(in: UIGraphicsGetCurrentContext()!)
+            var thumbnail = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            annotationView!.leftCalloutAccessoryView = resizeRenderImageView
+            annotationView?.image = thumbnail
+            let button = UIButton(type: .detailDisclosure)
+            annotationView?.rightCalloutAccessoryView = button
         }
         
         let imageView = annotationView?.leftCalloutAccessoryView as! UIImageView
-        // Add the image you stored from the image picker
-        imageView.image = pickedImage
+        
         
         return annotationView
+    }
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        let annotation = view.annotation as! PhotoAnnotation
+        self.photo = annotation.photo
+        performSegue(withIdentifier: "fullImageSegue", sender: nil)
     }
     
     func locationsPickedLocation(controller: LocationsViewController, latitude: NSNumber, longitude: NSNumber, name: String) {
@@ -94,8 +115,14 @@ class PhotoMapViewController: UIViewController, UIImagePickerControllerDelegate,
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let destination = segue.destination as! LocationsViewController
-        destination.delegate = self
+        if segue.identifier == "tagSegue" {
+            let destination = segue.destination as! LocationsViewController
+            destination.delegate = self
+        }
+        else {
+            let destination = segue.destination as! FullImageViewController
+            destination.photo = photo
+        }
     }
     
 
