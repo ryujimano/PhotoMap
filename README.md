@@ -1,8 +1,7 @@
-## Starter Project for Photo Map Exercise (Swift)
-![Image](http://i.imgur.com/WIwqNtn.gif)
+## PhotoMap
+![Image](https://github.com/ryujimano/PhotoMap/blob/master/PhotoMapDemo.gif)
 
 - Connects with Foursquare API
-- Implements `LocationsViewController`
-- Placeholders for `PhotoMapViewController` and `FullImageViewController`
+- Implements `LocationsViewController`, `PhotoMapViewController` and `FullImageViewController`
 
     
